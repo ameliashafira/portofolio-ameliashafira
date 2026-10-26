@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amelia Shafira Juliani - Cinematic Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            background-color: #2a1b24;
+            color: #ffffff;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- BACKGROUND UTAMA (TULIP BEREMBUN) --- */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            background: url('1000710063.jpg') no-repeat center center/cover;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* --- KELOPAK BUNGA BERJATUHAN --- */
+        #petal-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* --- DEVICE PREVIEW TOOLBAR --- */
+        .device-toolbar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 25000;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            padding: 6px 14px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .device-toolbar span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffd1dc;
+            margin-right: 4px;
+        }
+
+        .device-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .device-btn:hover, .device-btn.active {
+            background: rgba(255, 255, 255, 0.35);
+            color: #ffffff;
+        }
+
+        /* --- WRAPPER UTAMA RESPONSIVE DEVICE --- */
+        #device-frame {
+            width: 100vw;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .device-mobile {
+            max-width: 414px !important;
+            height: 850px !important;
+            margin: 60px auto !important;
+            border: 10px solid rgba(255, 255, 255, 0.25);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            overflow-y: scroll;
+            position: relative;
+        }
+
+        .device-tablet {
+            max-width: 768px !important;
+            height: 900px !important;
+            margin: 50px auto !important;
+            border: 12px solid rgba(255, 255, 255, 0.25);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            overflow-y: scroll;
+            position: relative;
+        }
+
+        /* --- AUDIO PLAYER FLOATING --- */
+        .audio-widget {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 10px 18px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audio-widget:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .audio-widget span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* --- MODAL MUSIK AWAL --- */
+        #music-prompt-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            z-index: 30000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: opacity 0.6s ease;
+        }
+
+        .music-prompt-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 35px;
+            border-radius: 28px;
+            text-align: center;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            animation: cinematicZoomIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .music-prompt-box h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .music-prompt-box p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 25px;
+        }
+
+        .music-btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .music-btn {
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: 0.3s;
+        }
+
+        .music-btn.yes {
+            background: #d48392;
+            color: white;
+            border-color: #d48392;
+        }
+
+        .music-btn.yes:hover {
+            background: #b76e79;
+            transform: scale(1.05);
+        }
+
+        .music-btn.no {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .music-btn.no:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        /* --- INTRO SCREEN CINEMATIC --- */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url('1000710063.jpg') no-repeat center center/cover;
+            z-index: 20000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.2s cubic-bezier(0.77, 0, 0.175, 1), transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+            perspective: 1000px;
+        }
+
+        .intro-card-3d {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            padding: 50px 40px;
+            border-radius: 35px;
+            text-align: center;
+            box-shadow: 0 35px 70px rgba(0,0,0,0.5), 0 0 40px rgba(255, 182, 193, 0.3);
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out;
+            max-width: 480px;
+            width: 90%;
+            animation: cinematicZoomIn 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cinematicZoomIn {
+            from { opacity: 0; transform: scale(0.85) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .heavenly-hands-svg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 22px;
+            transform: translateZ(30px);
+        }
+
+        .hand-svg {
+            width: 75px;
+            height: 48px;
+            fill: rgba(255, 255, 255, 0.95);
+            filter: drop-shadow(0 0 15px rgba(255, 192, 203, 0.9));
+        }
+
+        .hand-left-svg { animation: reachLeftAnim 2.5s infinite ease-in-out; }
+        .hand-right-svg { animation: reachRightAnim 2.5s infinite ease-in-out; }
+
+        @keyframes reachLeftAnim {
+            0%, 100% { transform: translateX(0) rotate(-10deg); }
+            50% { transform: translateX(15px) rotate(3deg); }
+        }
+
+        @keyframes reachRightAnim {
+            0%, 100% { transform: scaleX(-1) translateX(0) rotate(-10deg); }
+            50% { transform: scaleX(-1) translateX(15px) rotate(3deg); }
+        }
+
+        .intro-title-web {
+            font-size: clamp(22px, 3.5vw, 32px);
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            transform: translateZ(40px);
+        }
+
+        .join-beta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 38px;
+            background: rgba(255, 255, 255, 0.28);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 40px;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            transform: translateZ(50px);
+        }
+
+        .join-beta-btn:hover {
+            background: rgba(255, 255, 255, 0.45);
+            transform: translateZ(65px) scale(1.06);
+        }
+
+        #intro-screen.fade-out {
+            opacity: 0;
+            transform: scale(1.15);
+            pointer-events: none;
+        }
+
+        /* --- NAVBAR STICKY CINEMATIC --- */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            font-size: 13px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.4);
+        }
+
+        /* --- SECTIONS (FULL SCREEN SNAP) --- */
+        section {
+            width: 100%;
+            height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px 20px 20px;
+            box-sizing: border-box;
+        }
+
+        .section-inner {
+            max-width: 950px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        h2.section-title {
+            font-size: clamp(22px, 3.2vw, 30px);
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 3px 12px rgba(0,0,0,0.4);
+            text-align: center;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        /* --- GLASSMORPHISM --- */
+        .glass-box {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            padding: 32px;
+            transition: all 0.4s ease;
+        }
+
+        .glass-box:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-6px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* --- ABOUT ME --- */
+        .about-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+        }
+
+        .profile-img-wrapper {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+            cursor: pointer;
+            transition: transform 0.4s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-img-wrapper:hover {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        .profile-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about-text h3 {
+            font-size: 23px;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            margin-bottom: 4px;
+        }
+
+        .about-text h4 {
+            font-size: 14.5px;
+            color: #ffd1dc;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .about-text p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.95);
+            max-width: 680px;
+            margin-bottom: 15px;
+        }
+
+        .cv-download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 10px 22px;
+            border-radius: 30px;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13.5px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+
+        .cv-download-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
+        }
+
+        /* --- GRID 3 KOTAK --- */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card-item {
+            cursor: pointer;
+            text-align: center;
+            padding: 26px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-thumb {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.8);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .card-item h4 {
+            font-size: 17px;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            margin-bottom: 4px;
+        }
+
+        .card-item p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+
+        /* --- SKILLS & CONTACT --- */
+        .skills-flex {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .skill-tag {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: 0.3s;
+        }
+
+        .skill-tag:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-3px);
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn {
+            background: rgba(255, 255, 255, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            padding: 12px 26px;
+            border-radius: 35px;
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .contact-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-4px);
+        }
+
+        /* --- MODAL POP-UP DETAIL --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(10px);
+            z-index: 40000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(25px);
+            padding: 35px;
+            border-radius: 28px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            animation: cinematicZoomIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 15px;
+        }
+
+        .modal-content h3 {
+            color: #ffffff;
+            font-size: 20px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .modal-content p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            color: white;
+            padding: 8px 22px;
+            border-radius: 22px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.55);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Utama -->
+    <div class="bg-container"></div>
+    <div class="bg-overlay"></div>
+
+    <!-- Canvas Kelopak Bunga Berjatuhan -->
+    <canvas id="petal-canvas"></canvas>
+
+    <!-- DEVICE PREVIEW TOOLBAR -->
+    <div class="device-toolbar">
+        <span>📱 Device:</span>
+        <button class="device-btn active" onclick="setDevice('desktop')">Desktop</button>
+        <button class="device-btn" onclick="setDevice('tablet')">Tablet</button>
+        <button class="device-btn" onclick="setDevice('mobile')">Mobile</button>
+    </div>
+
+    <!-- Modal Musik Awal -->
+    <div id="music-prompt-modal">
+        <div class="music-prompt-box">
+            <h3>🎵 Putar Musik Background?</h3>
+            <p>Nikmati portofolio sinematik ini dengan alunan musik pengiring.</p>
+            <div class="music-btn-group">
+                <button class="music-btn yes" onclick="handleMusicChoice(true)">Iya, Putar!</button>
+                <button class="music-btn no" onclick="handleMusicChoice(false)">Tidak</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intro Screen Cinematic -->
+    <div id="intro-screen">
+        <div class="intro-card-3d" id="introCard" onclick="startPortfolio()">
+            <div class="heavenly-hands-svg">
+                <svg class="hand-svg hand-left-svg" viewBox="0 0 24 24">
+                    <path d="M18.5 11.5c-.8 0-1.5.7-1.5 1.5v2.3c0 .4-.3.7-.7.7s-.7-.3-.7-.7V7.2c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v8c0 .4-.3.7-.7.7s-.7-.3-.7-.7V5.5c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v10.3c0 .4-.3.7-.7.7s-.7-.3-.7-.7V9c0-.8-.7-1.5-1.5-1.5S6 8.2 6 9v7.8c0 3.3 2.7 6 6 6s6-2.7 6-6v-3.8c0-.8-.7-1.5-1.5-1.5z"/>
+                </svg>
+                <svg class="hand-svg hand-right-svg" viewBox="0 0 24 24">
+                    <path d="M18.5 11.5c-.8 0-1.5.7-1.5 1.5v2.3c0 .4-.3.7-.7.7s-.7-.3-.7-.7V7.2c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v8c0 .4-.3.7-.7.7s-.7-.3-.7-.7V5.5c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v10.3c0 .4-.3.7-.7.7s-.7-.3-.7-.7V9c0-.8-.7-1.5-1.5-1.5S6 8.2 6 9v7.8c0 3.3 2.7 6 6 6s6-2.7 6-6v-3.8c0-.8-.7-1.5-1.5-1.5z"/>
+                </svg>
+            </div>
+            <div class="intro-title-web">Welcome to Amelia's Web</div>
+            <div class="join-beta-btn">
+                <span>Enter Cinematic Experience</span>
+                <span>✨</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Player -->
+    <audio id="bg-audio" loop>
+        <source src="bye-remix.mp3" type="audio/mpeg">
+    </audio>
+    <div class="audio-widget" onclick="toggleAudio()">
+        <span>🎵 Play Music</span>
+    </div>
+
+    <!-- Navigasi Menu Sticky -->
+    <nav id="mainNav" style="display: none;">
+        <a href="#about-section" class="nav-btn active">About</a>
+        <a href="#org-section" class="nav-btn">Organization</a>
+        <a href="#achieve-section" class="nav-btn">Achievements</a>
+        <a href="#skills-section" class="nav-btn">Skills</a>
+        <a href="#contact-section" class="nav-btn">Contact</a>
+    </nav>
+
+    <!-- Wrapper Perangkat Interaktif -->
+    <div id="device-frame">
+        <main id="mainContent" style="opacity: 0; transition: opacity 1s ease;">
+            <!-- ABOUT ME + CV -->
+            <section id="about-section">
+                <div class="section-inner">
+                    <h2 class="section-title">About Me</h2>
+                    <div class="glass-box about-container">
+                        <div class="profile-img-wrapper" onclick="showAboutDetail()">
+                            <!-- Menggunakan profil.jpg untuk foto profil asli kamu -->
+                            <img src="profil.jpg" alt="Amelia Shafira Juliani" onerror="this.src='https://via.placeholder.com/150/b76e79/ffffff?text=Amelia'">
+                        </div>
+                        <div class="about-text">
+                            <h3>Amelia Shafira Juliani</h3>
+                            <h4>S1 Sistem Informasi • Universitas Negeri Surabaya (UNESA)</h4>
+                            <p>Halo! Saya mahasiswi aktif S1 Sistem Informasi UNESA yang memiliki minat mendalam pada analisis sistem, kepemimpinan organisasi, serta pengembangan teknologi kreatif. Saya terbiasa memimpin tim, mengelola event berskala besar, serta aktif mengeksplorasi inovasi riset ilmiah dan desain antarmuka digital dengan dedikasi tinggi.</p>
+                            <!-- Tombol Download / View CV -->
+                            <a href="CV.pdf" target="_blank" class="cv-download-btn">📄 Download / View CV</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ORGANIZATION & EXPERIENCE -->
+            <section id="org-section">
+                <div class="section-inner">
+                    <h2 class="section-title">Experience & Organization</h2>
+                    <div class="grid-3">
+                        <div class="glass-box card-item" onclick="showModal('Koordinator Seksi Bidang 5', 'Memimpin dan mengkoordinasikan program kerja strategis serta pengembangan kreativitas dan kedisiplinan organisasi secara menyeluruh.', 'org1.jpg')">
+                            <img src="org1.jpg" class="card-thumb" alt="Org 1" onerror="this.src='https://via.placeholder.com/150/b76e79/ffffff?text=Org+1'">
+                            <h4>Koordinator Seksi Bidang 5</h4>
+                            <p>Pengurus Organisasi • Klik untuk detail</p>
+                        </div>
+                        <div class="glass-box card-item" onclick="showModal('Ketua Pelaksana MPLS TAJAR 2024', 'Bertanggung jawab penuh dalam memimpin manajemen kepanitiaan, koordinasi acara, dan kelancaran kegiatan Masa Pengenalan Lingkungan Sekolah TAJAR 2024.', 'org2.jpg')">
+                            <img src="org2.jpg" class="card-thumb" alt="Org 2" onerror="this.src='https://via.placeholder.com/150/b76e79/ffffff?text=Org+2'">
+                            <h4>Ketua Pelaksana MPLS TAJAR 2024</h4>
+                            <p>Penanggung Jawab Utama • Klik untuk detail</p>
+                        </div>
+                        <div class="glass-box card-item" onclick="showModal('Anggota UKIM (Karya Ilmiah) Unesa', 'Aktif berpartisipasi dalam riset, penulisan, dan pengembangan karya ilmiah mahasiswa di lingkungan Universitas Negeri Surabaya.', 'org3.jpg')">
+                            <img src="org3.jpg" class="card-thumb" alt="Org 3" onerror="this.src='https://via.placeholder.com/150/b76e79/ffffff?text=Org+3'">
+                            <h4>Anggota UKIM Unesa</h4>
+                            <p>Unit Kegiatan Ilmiah Mahasiswa • Klik untuk detail</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACHIEVEMENTS -->
+            <section id="achieve-section">
+                <div class="section-inner">
+                    <h2 class="section-title">Achievements & Certification</h2>
+                    <div class="grid-3">
+                        <div class="glass-box card-item" onclick="showModal('Medali Perak — Olimpiade Sains Bidang Informatika', 'Meraih Medali Perak dalam ajang Olimpiade Sains Tingkat Nasional yang diselenggarakan oleh Pusat Presentasi Nusantara pada tahun 2025.', 'ach1.jpg')">
+                            <img src="ach1.jpg" class="card-thumb" alt="Ach 1" onerror="this.src='https://via.placeholder.com/150/b76e79/ffffff?text=Ach+1'">
+                            <h4>Medali Perak Informatika</h4>
+                            <p>Pusat Presentasi Nusantara (2025)</p>
+                        </div>
+                        <div class="glass-box card-item" onclick="showModal('Medali Emas — Olimpiade Sains Bidang PKN', 'Meraih prestasi tertinggi Medali Emas dalam Olimpiade Sains Bidang Pendidikan Kewarganegaraan oleh Pusat Presentasi Nusantara tahun 2025.', 'ach2.jpg')">
+                            <img src="ach2.jpg" class="card-thumb" alt="Ach 2" onerror="this.src='https://via.placeholder.com/150/b76e79/ffffff?text=Ach+2'">
+                            <h4>Medali Emas PKN</h4>
+                            <p>Pusat Presentasi Nusantara (2025)</p>
+                        </div>
+                        <div class="glass-box card-item" onclick="showModal('Sertifikat Pelatihan Desain Grafis', 'Menyelesaikan pelatihan intensif Desain Grafis dengan predikat kelulusan Sangat Baik dari Institut Teknologi Sepuluh Nopember (ITS) pada tahun 2024.', 'ach3.jpg')">
+                            <img src="ach3.jpg" class="card-thumb" alt="Ach 3" onerror="this.src='https://via.placeholder.com/150/b76e79/ffffff?text=Ach+3'">
+                            <h4>Sertifikasi Desain Grafis</h4>
+                            <p>Predikat Sangat Baik • ITS (2024)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SKILLS -->
+            <section id="skills-section">
+                <div class="section-inner">
+                    <h2 class="section-title">Skills & Expertise</h2>
+                    <div class="glass-box">
+                        <div class="skills-flex">
+                            <div class="skill-tag">Information Systems Analysis</div>
+                            <div class="skill-tag">Project & Event Leadership</div>
+                            <div class="skill-tag">Scientific Research (UKIM)</div>
+                            <div class="skill-tag">Graphic Design & UI/UX</div>
+                            <div class="skill-tag">Informatics & Logic Problem Solving</div>
+                            <div class="skill-tag">Public Speaking & Team Management</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONTACT (LINKEDIN, WA, IG) -->
+            <section id="contact-section">
+                <div class="section-inner">
+                    <h2 class="section-title">Get in Touch</h2>
+                    <div class="glass-box">
+                        <div class="contact-links">
+                            <a href="https://www.linkedin.com/in/amelia-shafira-juliani" target="_blank" class="contact-btn">💼 LinkedIn</a>
+                            <a href="https://wa.me/6281331979805" target="_blank" class="contact-btn">💬 WhatsApp</a>
+                            <a href="https://instagram.com/mellshfr" target="_blank" class="contact-btn">📸 Instagram (@mellshfr)</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Pop-up Detail -->
+    <div id="detail-modal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modal-img" src="" alt="Detail" onerror="this.src='https://via.placeholder.com/300x180/b76e79/ffffff?text=Detail+Image'">
+            <h3 id="modal-title">Title</h3>
+            <p id="modal-desc">Description</p>
+            <button class="close-btn" onclick="closeModal()">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        function setDevice(type) {
+            const frame = document.getElementById('device-frame');
+            frame.className = '';
+            document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (type === 'mobile') {
+                frame.classList.add('device-mobile');
+            } else if (type === 'tablet') {
+                frame.classList.add('device-tablet');
+            }
+        }
+
+        const canvas = document.getElementById('petal-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Petal {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.size = Math.random() * 8 + 6;
+                this.speedY = Math.random() * 1.5 + 0.8;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 2 - 1;
+                this.opacity = Math.random() * 0.6 + 0.4;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                if (this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.fillStyle = `rgba(255, 182, 193, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const petals = [];
+        for (let i = 0; i < 40; i++) petals.push(new Petal());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            petals.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        const introCard = document.getElementById('introCard');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            if(introCard && document.getElementById('intro-screen').style.display !== 'none') {
+                introCard.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+
+        const audio = document.getElementById('bg-audio');
+        let isPlaying = false;
+        let userWantsMusic = false;
+
+        function handleMusicChoice(play) {
+            userWantsMusic = play;
+            const modal = document.getElementById('music-prompt-modal');
+            modal.style.opacity = '0';
+            setTimeout(() => { modal.style.display = 'none'; }, 600);
+
+            if (play) {
+                audio.currentTime = 0;
+                audio.play().then(() => {
+                    isPlaying = true;
+                    document.querySelector('.audio-widget span').innerText = '🔊 Playing Music';
+                }).catch(e => {
+                    console.log("Autoplay blocked");
+                });
+            }
+        }
+
+        function startPortfolio() {
+            const intro = document.getElementById('intro-screen');
+            intro.classList.add('fade-out');
+            setTimeout(() => {
+                intro.style.display = 'none';
+                document.getElementById('mainNav').style.display = 'flex';
+                document.getElementById('mainContent').style.opacity = '1';
+            }, 1000);
+
+            if (userWantsMusic && !isPlaying) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    document.querySelector('.audio-widget span').innerText = '🔊 Playing Music';
+                }).catch(e => console.log("Audio play blocked"));
+            }
+        }
+
+        function toggleAudio() {
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                document.querySelector('.audio-widget span').innerText = '🎵 Play Music';
+            } else {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    document.querySelector('.audio-widget span').innerText = '🔊 Playing Music';
+                }).catch(e => {
+                    alert("Gagal memutar audio. Pastikan file 'bye-remix.mp3' ada di folder yang sama!");
+                });
+            }
+        }
+
+        const sections = document.querySelectorAll('section');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const deviceFrame = document.getElementById('device-frame');
+
+        deviceFrame.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (deviceFrame.scrollTop >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('href').includes(current)) {
+                    btn.classList.add('active');
+                }
+            });
+        });
+
+        function showModal(title, desc, imgSrc) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-img').src = imgSrc;
+            document.getElementById('detail-modal').style.display = 'flex';
+        }
+
+        function showAboutDetail() {
+            showModal('Amelia Shafira Juliani - S1 Sistem Informasi UNESA', 'Mahasiswi aktif S1 Sistem Informasi UNESA yang memiliki segudang pengalaman kepemimpinan organisasi, prestasi olimpiade sains nasional (Medali Emas & Perak), serta sertifikasi keahlian desain grafis dari ITS.', 'profil.jpg');
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
